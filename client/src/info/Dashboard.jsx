@@ -11,7 +11,7 @@ const Dashboard = () => {
   const navigate = useNavigate()
   const [course, setcourse] = useState("");
   const [staff, setstaff] = useState("");
-  const [year, setyear] = useState("");
+  const [year, setyear] = useState(0);
   const [semester, setsemester] = useState("");
   const [subjectc, setsubjectc] = useState("");
   const [register, setregister] = useState("");
@@ -24,7 +24,8 @@ const Dashboard = () => {
   const [assign3, setassign3] = useState("");
   const [model, setmodel] = useState("");
   const [Total, setTotal] = useState("");
-  //avg
+  //avg0-o=op]
+
   const [avgoftheory, setavgtheory] = useState("");
   const [avgofassign, setavgassign] = useState("");
   const [avgofmodel, setavgmodel] = useState("");
@@ -51,7 +52,12 @@ const Dashboard = () => {
     setTotal(Number(total));
   };
   const create = async()=>{
-     const data = {
+    if(!course){
+      document.getElementById("forcourse").value +="Course is Required" 
+      return
+    } 
+   
+     const data = { 
         registerno:register,
         course:course,
         subjectcode:subjectc,
@@ -59,7 +65,7 @@ const Dashboard = () => {
         avgassignment:avgofassign,
         attendance:attendace,
         seminar:seminar,
-        internal_marks:Total,
+        internal_marks:Total,  
         year:year
      }
     await axios.post("http://localhost:5000/add",data).then(()=>{
@@ -68,13 +74,15 @@ const Dashboard = () => {
   }
   return (
     <div className="content">
+      <form>
       <div className="header">ERODE ARTS AND SCIENCE COLLEGE</div>
      <div className="getreport"><button className="btn btn-primary" onClick={()=>navigate("/getreport")}>Get Report</button></div>
       <div className="container">
         <div className="row">
           <div className="left col-3">
-            <form autoComplete="off">
+           
               <br></br>
+              
               <div className="form-group">
                 <label>Course:</label>
                 <input
@@ -85,7 +93,7 @@ const Dashboard = () => {
                   }}
                   placeholder="Course"
                 />
-
+              <span id="forcourse"></span>
                 <label>Staff Name</label>
                 <input
                   type="text"
@@ -99,10 +107,11 @@ const Dashboard = () => {
                 <input
                   type="number"
                   class="inp form-control"
+                  placeholder="Year"
                   onChange={(e) => {
-                    setstaff(parseInt(e.target.value));
+                    setyear(parseInt(e.target.value));
                   }}
-                  placeholder="year"
+                  
                 />
 
 
@@ -123,18 +132,17 @@ const Dashboard = () => {
                     setsubjectc(e.target.value);
                   }}
                 />
-
+ 
                 <br></br>
                 <button type="reset" class="btn1 btn btn-danger">
                   clear
                 </button>
               </div>
-            </form>
+            
           </div>
           <div class="vl"></div>
 
           <div className="center col-3">
-            <form className="form-group">
               <div>
                 <label>Register No</label>
                 <input
@@ -176,7 +184,7 @@ const Dashboard = () => {
                     setattendance(parseInt(e.target.value));
                   }}
                   id="attendance"
-                  value={attendace}
+                  
                 />
                 <label>Seminar</label>
                 <input
@@ -186,11 +194,10 @@ const Dashboard = () => {
                   onChange={(e) => {
                     setseminar(parseInt(e.target.value));
                   }}
-                  value={seminar}
+                  
                   id="seminar"
                 />
               </div>
-            </form>
           </div>
           <div className="center2 col-3">
             <div>
@@ -290,6 +297,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      </form>
     </div>
   );
 };
