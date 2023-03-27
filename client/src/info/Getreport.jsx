@@ -12,17 +12,31 @@ const Getreport = () => {
 
 
    const exportdata = async()=>{
+   
     if(course1 && year1){
       const data = {
         course1:course1,
         year1:year1
       }
-    const result =  await axios.post("http://localhost:5000/test",data)
-     await setjsondata(result.data)
-    }else{
+      console.log("clicked");
+     axios.post("http://localhost:5000/test",data).then((result)=>{
+      if(result.data.length > 0){
+        console.log("clicked2");
+       setjsondata(result.data)
+      }
+      
+      else{
+        alert("No such Data")
+      }
+     
+     })
+  
+    }
+    else{
       alert("Course and Year is Mandatory")
     }
     }
+
     var  csvreport = {
       filename: 'Report.csv',
       data:jsondata
@@ -55,10 +69,10 @@ const Getreport = () => {
             </div><br></br>
             
         
-            <div style={{marginLeft:"40%"}}>
+            <div style={{marginLeft:"35%"}}>
             <button class="btn btn-success  text-uppercase fw-bold" type="button" onClick={exportdata}
             
-            >Get Report </button>
+            >Export Report </button>
           </div>
           {
             jsondata.length > 0 &&(
@@ -93,10 +107,10 @@ const Getreport = () => {
             </div><br></br>
             
         
-            <div style={{marginLeft:"40%"}}>
+            <div style={{marginLeft:"35%"}}>
             <button class="btn btn-success  text-uppercase fw-bold" type="submit"
             
-            >Get Report </button>
+            >Export Report </button>
           </div>
           
         </div>

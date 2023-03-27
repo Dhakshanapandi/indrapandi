@@ -11,19 +11,20 @@ const Dashboard = () => {
   const navigate = useNavigate()
   const [course, setcourse] = useState("");
   const [staff, setstaff] = useState("");
-  const [year, setyear] = useState(0);
+  const [year, setyear] = useState("");
   const [semester, setsemester] = useState("");
   const [subjectc, setsubjectc] = useState("");
   const [register, setregister] = useState("");
   const [t1, sett1] = useState("");
   const [t2, sett2] = useState("");
-  const [attendace, setattendance] = useState(0);
-  const [seminar, setseminar] = useState(0);
+  const [attendace, setattendance] = useState("");
+  const [seminar, setseminar] = useState("");
   const [assign1, setassign1] = useState("");
   const [assign2, setassign2] = useState("");
   const [assign3, setassign3] = useState("");
   const [model, setmodel] = useState("");
   const [Total, setTotal] = useState("");
+  const [update,setupdate] = useState(false)
   //avg0-o=op]
 
   const [avgoftheory, setavgtheory] = useState("");
@@ -52,11 +53,6 @@ const Dashboard = () => {
     setTotal(Number(total));
   };
   const create = async()=>{
-    if(!course){
-      document.getElementById("forcourse").value +="Course is Required" 
-      return
-    } 
-   
      const data = { 
         registerno:register,
         course:course,
@@ -68,13 +64,58 @@ const Dashboard = () => {
         internal_marks:Total,  
         year:year
      }
-    await axios.post("http://localhost:5000/add",data).then(()=>{
-      alert("submitted successfully")
+     if(!update){
+      await axios.post("http://localhost:5000/add",data).then((err,result)=>{
+      if(!err) alert("Successfully Inserted")
+      else{
+        console.log(err);
+        alert(err.data.sqlMessage)
+      }
      })
+     }
+     else{
+      await axios.put("http://localhost:5000/update",data).then(()=>{
+        alert("Updated successfully")
+       })
+     }
+    
   }
+  const getdata = ()=>{
+    var data = document.getElementById("regno").value
+    if(!data){
+      alert("Register No is required To Update")
+    }
+    else{
+      
+      axios.get(`http://localhost:5000/getdata/${register}`).then((res)=>{
+
+
+      res.data.map((items)=>{
+
+        setattendance(items.attendance)
+        setavgassign(items.avgassignment)
+        setavgtheory(items.avgtheory)
+        setcourse(items.course)
+        setTotal(items.internal_marks)
+        setregister(items.registerno)
+        setseminar(items.seminar)
+        setsubjectc(items.subjectcode)
+        setyear(items.year)
+      })
+      setupdate(true)
+       
+      })
+    }
+  }
+  const clearfileds = () => {
+    
+    window.location.reload(true)
+    return;
+  };
+
   return (
     <div className="content">
-      <form>
+      <form autoComplete="off">
       <div className="header">ERODE ARTS AND SCIENCE COLLEGE</div>
      <div className="getreport"><button className="btn btn-primary" onClick={()=>navigate("/getreport")}>Get Report</button></div>
       <div className="container">
@@ -88,10 +129,12 @@ const Dashboard = () => {
                 <input
                   type="text"
                   class="form-control"
+                  maxLength={8}
                   onChange={(e) => {
                     setcourse(e.target.value);
                   }}
                   placeholder="Course"
+                  value={course}
                 />
               <span id="forcourse"></span>
                 <label>Staff Name</label>
@@ -101,7 +144,9 @@ const Dashboard = () => {
                   onChange={(e) => {
                     setstaff(e.target.value);
                   }}
+                  maxLength={15}
                   placeholder="Staff Name"
+                  value={staff}
                 />
                 <label>year</label>
                 <input
@@ -111,6 +156,7 @@ const Dashboard = () => {
                   onChange={(e) => {
                     setyear(parseInt(e.target.value));
                   }}
+                  value={year}
                   
                 />
 
@@ -119,24 +165,26 @@ const Dashboard = () => {
                 <input
                   type="text"
                   class="form-control"
+                  maxLength={5}
                   onChange={(e) => {
                     setsemester(e.target.value);
                   }}
+                  value={semester}
                 />
 
                 <label>Subject Code</label>
                 <input
                   type="text"
                   class="form-control"
+                  maxLength={8}
                   onChange={(e) => {
                     setsubjectc(e.target.value);
                   }}
+                  value={subjectc}
                 />
  
-                <br></br>
-                <button type="reset" class="btn1 btn btn-danger">
-                  clear
-                </button>
+               
+                
               </div>
             
           </div>
@@ -153,6 +201,7 @@ const Dashboard = () => {
                   onChange={(e) => {
                     setregister(parseInt(e.target.value));
                   }}
+                  value={register}
                 />
                 <label>T1</label>
                 <input
@@ -163,6 +212,7 @@ const Dashboard = () => {
                   onChange={(e) => {
                     sett1(parseInt(e.target.value));
                   }}
+                  value={t1}
                 />
                 <label>T2</label>
                 <input
@@ -173,6 +223,7 @@ const Dashboard = () => {
                   onChange={(e) => {
                     sett2(parseInt(e.target.value));
                   }}
+                  value={t2}
                 />
 
                 <label>Attendance</label>
@@ -180,10 +231,12 @@ const Dashboard = () => {
                   type="number"
                   class="inp form-control"
                   placeholder="Attendance"
+                 
                   onChange={(e) => {
                     setattendance(parseInt(e.target.value));
                   }}
                   id="attendance"
+                  value={attendace}
                   
                 />
                 <label>Seminar</label>
@@ -194,7 +247,7 @@ const Dashboard = () => {
                   onChange={(e) => {
                     setseminar(parseInt(e.target.value));
                   }}
-                  
+                  value={seminar}
                   id="seminar"
                 />
               </div>
@@ -210,6 +263,7 @@ const Dashboard = () => {
                   setassign1(parseInt(e.target.value));
                 }}
                 id="assignment1"
+                value={assign1}
               />
               <label>Assignment 2</label>
               <input
@@ -220,6 +274,7 @@ const Dashboard = () => {
                   setassign2(parseInt(e.target.value));
                 }}
                 id="assignment2"
+                value={assign2}
               />
               <label>Assignment 3</label>
               <input
@@ -230,6 +285,7 @@ const Dashboard = () => {
                   setassign3(parseInt(e.target.value));
                 }}
                 id="assignment3"
+                value={assign3}
               />
 
               <label>Modal</label>
@@ -238,6 +294,10 @@ const Dashboard = () => {
                 class="inp form-control"
                 placeholder="Modal"
                 id="model"
+                value={model}
+                onChange={(e) => {
+                  setmodel(parseInt(e.target.value));
+                }}
               />
             </div>
           </div>
@@ -289,9 +349,10 @@ const Dashboard = () => {
                   Submit
                 </button>
                 &#160;&#160;
-                <button type="reset" class="btn btn-danger" onClick={clearfileds}>
+                <button type="button" class="btn btn-danger" onClick={clearfileds}>
                   clear
-                </button>
+                </button><br></br>
+                <button type="button" className="btn btn-warning" style={{marginTop:"10px"}} onClick={getdata}>Update</button>
               </div>
             </div>
           </div>
