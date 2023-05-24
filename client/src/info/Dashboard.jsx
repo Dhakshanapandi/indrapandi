@@ -148,9 +148,13 @@ const Dashboard = () => {
     } else {
       await axios
         .put("http://localhost:5000/update", data)
-        .then((err, result) => {
-          if (!err) {
-            alert("Updated SuccessFully");
+        .then((result) => {
+          
+          if(result.data){
+            alert("Updated Successfully");
+          }
+          else{
+            alert("Make Some Changes or No Such Student")
           }
         });
     }

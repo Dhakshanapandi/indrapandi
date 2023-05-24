@@ -162,8 +162,12 @@ app.get("/getdata/:id", (req, res) => {
 app.put("/update", (req, res) => {
   console.log(req.body);
   var sql_query = `UPDATE marks SET course = '${req.body.course}',year=${req.body.year}, subjectcode='${req.body.subjectc}', avgtheory=${req.body.avgtheory}, avgassignment=${req.body.avgassignment}, attendance=${req.body.attendance}, seminar=${req.body.seminar}, internal_marks=${req.body.internal_marks}, assign1=${req.body.assign1}, assign2=${req.body.assign2}, assign3=${req.body.assign3}, t1=${req.body.t1}, t2=${req.body.t2}, model=${req.body.model}, avgmodel=${req.body.avgofmodel}, semester=${req.body.semester}, staffname='${req.body.staff}' where registerno ='${req.body.registerno}' `;
-  mysqlconnection.query(sql_query, (err, result) => {
-    console.log(err);
-    console.log(result);
+  mysqlconnection.query(sql_query, (err,result) => {
+    
+    
+    if(result.changedRows > 0){
+      return res.status(200).json(true)
+    }
+    return res.status(200).json(false)
   });
 });
