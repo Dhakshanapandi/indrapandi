@@ -71,6 +71,7 @@ input[type="text"].inp {
 }
 .header {
   margin-top: -1px;
+  margin-left: -30px;
   background-color: #444447;
   height: 50px;
   text-align: center;
@@ -87,4 +88,7 @@ input[type="text"].inp {
   float: right;
   margin-top: -45px;
   margin-right: 50px;
+}
+body{
+  margin-left: 5px;
 }

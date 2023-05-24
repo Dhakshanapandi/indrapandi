@@ -15,6 +15,11 @@ var mysqlconnection = mysql.createConnection({
   user: "root",
   password: "root",
   database: "internal",
+
+
+
+
+
 });
 
 mysqlconnection.connect((err) => {
@@ -55,76 +60,79 @@ app.post("/export1", (req, response) => {
 });
 
 app.post("/add", (req, res) => {
+  
   const {
     registerno,
     course,
-    year,
-    subjectcode,
+    subjectc,
     avgtheory,
     avgassignment,
+    avgofmodel,
+    semester,
     attendance,
     seminar,
     internal_marks,
+    staff,
+    t1,
+    t2,
+    assign1,
+    assign2,
+    assign3,
+    model,
+    year,
   } = req.body;
-  console.log(req.body);
+ 
+  console.log(req.body); 
   var sqlinsert =
-    "INSERT INTO marks(registerno,course, year,subjectcode, avgtheory, avgassignment, attendance, seminar, internal_marks) VALUES (?,?,?,?,?,?,?,?,?)";
+    "INSERT INTO marks(registerno, course, year, subjectcode, avgtheory, avgassignment, attendance, seminar, internal_marks, assign1, assign2, assign3, t1, t2, model, avgmodel, semester, staffname) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
   mysqlconnection.query(
     sqlinsert,
     [
       registerno,
       course,
       year,
-      subjectcode,
+      subjectc,
       avgtheory,
       avgassignment,
       attendance,
       seminar,
       internal_marks,
+      assign1,
+      assign2,
+      assign3,
+      t1,
+      t2,
+      model,
+      avgofmodel,
+      semester,
+      staff,
     ],
     (err, result) => {
-      if (!err)
-      {
+      if (!err) {
         res.send(result);
         console.log(result);
+      } else {
+        res.send(err);
+        console.log(err);
       }
-     else
-     {res.send(err);
-    console.log(err);} 
     }
   );
 });
 
-app.get("/export1", function (request, response, next) {
-  mysqlconnection.query(
-    "SELECT * FROM marks WHERE (course)",
-    function (error, data) {
-      var mysql_data = JSON.parse(JSON.stringify(data));
-
-      //convert JSON to CSV Data
-
-      var file_header = ["First Name", "Last Name", "Age", "Gender"];
-
-      var json_data = new data_exporter({ file_header });
-
-      var csv_data = json_data.parse(mysql_data);
-
-      response.setHeader("Content-Type", "text/csv");
-
-      response.setHeader(
-        "Content-Disposition",
-        "attachment; filename=sample_data.csv"
-      );
-
-      response.status(200).end(csv_data);
-    }
-  );
-});
-
-app.post("/test",(req, res) => {
+app.post("/test1", (req, res) => {
   console.log(req.body);
   mysqlconnection.query(
-    `SELECT * from marks WHERE (course = '${req.body.course1}' AND year = '${req.body.year1}');`,
+    `SELECT * from marks WHERE (course = '${req.body.course1}' AND subjectcode = '${req.body.subjectcode}');`,
+    (err, data) => {
+      console.log(data);
+      res.status(200).json(data);
+    }
+  );
+});
+app.post("/test2", (req, res) => {
+  console.log(req.body);
+  mysqlconnection.query(
+    `SELECT * from marks WHERE (course = '${req.body.course2}' AND year = '${req.body.year2}');`,
     (err, data) => {
       console.log(data);
       res.status(200).json(data);
@@ -134,7 +142,7 @@ app.post("/test",(req, res) => {
 
 app.get("/getdata/:id", (req, res) => {
   mysqlconnection.query(
-    `SELECT * FROM marks where registerno = ${req.params.id}`,
+    `SELECT * FROM marks where registerno = '${req.params.id}'`,
     (err, data) => {
       var newObj = Object.assign(
         {},
@@ -150,11 +158,12 @@ app.get("/getdata/:id", (req, res) => {
     }
   );
 });
-
-
-app.put("/update",(req,res)=>{
-  var sql_query = `UPDATE marks SET course = '${req.body.course}' where registerno =${req.body.registerno} `
-  mysqlconnection.query(sql_query,(err,result)=>{
+//registerno, course, 
+app.put("/update", (req, res) => {
+  console.log(req.body);
+  var sql_query = `UPDATE marks SET course = '${req.body.course}',year=${req.body.year}, subjectcode='${req.body.subjectc}', avgtheory=${req.body.avgtheory}, avgassignment=${req.body.avgassignment}, attendance=${req.body.attendance}, seminar=${req.body.seminar}, internal_marks=${req.body.internal_marks}, assign1=${req.body.assign1}, assign2=${req.body.assign2}, assign3=${req.body.assign3}, t1=${req.body.t1}, t2=${req.body.t2}, model=${req.body.model}, avgmodel=${req.body.avgofmodel}, semester=${req.body.semester}, staffname='${req.body.staff}' where registerno ='${req.body.registerno}' `;
+  mysqlconnection.query(sql_query, (err, result) => {
+    console.log(err);
     console.log(result);
-  })
-})
+  });
+});
